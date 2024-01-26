@@ -59,4 +59,9 @@ class Rating {
     data['count'] = this.count;
     return data;
   }
+
+  @override
+  String toString() {
+    return rate.toString();
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:product_manage_app/application/home/home_event.dart';
 import 'package:product_manage_app/application/home/home_state.dart';
@@ -15,14 +16,36 @@ class HomeBloc extends Bloc<EventProduct, StateProduct> {
     emit(StateProductInfoFetching());
     try {
       final List<Product>? productList = await productsService.getProductInfo();
-      if (productList != null && productList.isNotEmpty) {
-        emit(StateProductInfoFetched(productList));
+      final List<dynamic>? categoriesList =
+          await productsService.getCategoriesInfo();
+      if (productList != null &&
+          productList.isNotEmpty &&
+          categoriesList != null &&
+          categoriesList.isNotEmpty) {
+        productList.sort(
+          (a, b) => b.price!.compareTo(a.price!),
+        );
+        List<Product> top3ProductsList = productList.take(3).toList();
+        List<Widget> top3ProductListImage = top3ProductsList.map((product) {
+          return Image.network(product.image!);
+        }).toList();
+        List<Product> productOfCategories = [];
+        void _selectedCategoryProductList (String selectedCategory) {
+          for (var product in productList) {
+            if (product.category == selectedCategory) {
+              productOfCategories.add(product);
+            }
+          }
+        }
+        emit(
+          StateProductInfoFetched(productList, categoriesList,
+              top3ProductListImage, productOfCategories),
+        );
       } else {
-        emit(StateProductFailed('Ürün bilgisi alınamadı'));
+        emit(StateProductFailed('Bir hata oluştu'));
       }
     } catch (e) {
       emit(StateProductFailed(e.toString()));
     }
   }
 }
-
