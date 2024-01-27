@@ -29,17 +29,9 @@ class HomeBloc extends Bloc<EventProduct, StateProduct> {
         List<Widget> top3ProductListImage = top3ProductsList.map((product) {
           return Image.network(product.image!);
         }).toList();
-        List<Product> productOfCategories = [];
-        void _selectedCategoryProductList (String selectedCategory) {
-          for (var product in productList) {
-            if (product.category == selectedCategory) {
-              productOfCategories.add(product);
-            }
-          }
-        }
         emit(
           StateProductInfoFetched(productList, categoriesList,
-              top3ProductListImage, productOfCategories),
+              top3ProductListImage),
         );
       } else {
         emit(StateProductFailed('Bir hata oluştu'));

@@ -7,6 +7,7 @@ import 'package:product_manage_app/application/home/home_state.dart';
 import 'package:product_manage_app/domain/home/home_model.dart';
 import 'package:product_manage_app/presentation/pages/home/widgets/category_circle.dart';
 import 'package:product_manage_app/presentation/pages/home/widgets/gridview_shape.dart';
+import 'package:product_manage_app/presentation/pages/home/widgets/searchabar.dart';
 import 'package:product_manage_app/presentation/pages/product_detail/product_detail_page.dart';
 import 'package:product_manage_app/presentation/pages/product_of_categories/product_of_categories_page.dart';
 
@@ -17,11 +18,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int myCurrentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ürünler'),
+        title: const Text('Ürünler'),
       ),
       body: BlocBuilder<HomeBloc, StateProduct>(
         builder: (context, state) {
@@ -31,31 +33,44 @@ class _HomePageState extends State<HomePage> {
           } else if (state is StateProductInfoFetching) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is StateProductInfoFetched) {
-            return Column(
-              children: [
-                SearchBar(),
-                Expanded(
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: state.categoriesList.length,
-                    itemBuilder: (context, index) {
-                      var selecetedCategory = state.categoriesList[index];
-                      return CategoryCircle(
-                        categoryTitle: selecetedCategory,
-                        function: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ProductOfCatgories(selectedCategory: selecetedCategory,)));
-                        },
-                      );
-                    },
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: 10,
                   ),
-                ),
-                CarouselSlider(
+                  const SearchBar(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  SizedBox(
+                    height: 200,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: state.categoriesList.length,
+                      itemBuilder: (context, index) {
+                        var selectedCategory = state.categoriesList[index];
+                        return CategoryCircle(
+                          categoryTitle: selectedCategory,
+                          function: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => ProductOfCatgories(
+                                selectedCategory: selectedCategory,
+                              ),
+                            ));
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  CarouselSlider(
                     items: state.mostExpensiveProducts,
                     options: CarouselOptions(
                       autoPlayCurve: Curves.fastOutSlowIn,
-                      autoPlayAnimationDuration:
-                          const Duration(milliseconds: 800),
+                      autoPlayAnimationDuration: const Duration(milliseconds: 800),
                       autoPlayInterval: const Duration(seconds: 3),
                       enlargeCenterPage: true,
                       aspectRatio: 2.0,
@@ -66,36 +81,42 @@ class _HomePageState extends State<HomePage> {
                           myCurrentIndex = index;
                         });
                       },
-                    )),
-                Expanded(
-                    flex: 4,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: GridView.builder(
-                          itemCount: state.productList.length,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 12.0,
-                            crossAxisSpacing: 12.0,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: GridView.builder(
+                      shrinkWrap: true,
+                      itemCount: state.productList.length,
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 12.0,
+                        crossAxisSpacing: 12.0,
+                      ),
+                      itemBuilder: (context, index) {
+                        Product product = state.productList[index];
+                        return InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => ProductDetail(
+                                productItem: product,
+                              ),
+                            ));
+                          },
+                          child: GridviewShape(
+                            imageUrl: product.image!,
+                            productTitle: product.title!,
+                            productPrice: product.price.toString(),
                           ),
-                          itemBuilder: (context, index) {
-                            Product product = state.productList[index];
-                            return InkWell(
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => ProductDetail(
-                                          productItem: product,
-                                        )));
-                              },
-                              child: GridviewShape(
-                                  imageUrl: product.image!,
-                                  productTitle: product.title!,
-                                  productPrice: product.price.toString()),
-                            );
-                          }),
-                    ))
-              ],
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             );
           } else {
             return Container();
@@ -105,3 +126,4 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
