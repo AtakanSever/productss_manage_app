@@ -4,6 +4,8 @@ import 'package:product_manage_app/application/home/home_bloc.dart';
 import 'package:product_manage_app/application/home/home_event.dart';
 import 'package:product_manage_app/application/home/home_state.dart';
 import 'package:product_manage_app/domain/home/home_model.dart';
+import 'package:product_manage_app/presentation/core/common_widgets/add_cart_button.dart';
+import 'package:product_manage_app/presentation/core/utility/app-strings_style.dart';
 import 'package:product_manage_app/presentation/pages/product_detail/product_detail_page.dart';
 
 class ProductOfCatgories extends StatefulWidget {
@@ -29,7 +31,7 @@ class _ProductOfCatgoriesState extends State<ProductOfCatgories> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Products Of Categories'),
+        title: const Text('Products Of Categories'),
       ),
       body: BlocBuilder<HomeBloc, StateProduct>(builder: (context, state) {
         if (state is StateProductInitialize) {
@@ -51,30 +53,46 @@ class _ProductOfCatgoriesState extends State<ProductOfCatgories> {
                                   productItem: filteredProducts[index])));
                         },
                         child: Card(
-                          child: Container(
+                          child: SizedBox(
                               height: 150,
                               child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
                                 children: [
                                   ListTile(
-                                    leading: Image.network(
-                                      filteredProducts[index].image!,
+                                      leading: Image.network(
+                                        filteredProducts[index].image!,
+                                      ),
+                                      title: Text(
+                                        filteredProducts[index].title!,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      subtitle: Row(
+                                        children: [
+                                          Text(
+                                            'Ürün Puanı: ${filteredProducts[index].rating}',
+                                            style: AppStringStyle
+                                                .productOfCategoriesRatingStyle,
+                                          ),
+                                        ],
+                                      )),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 30),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          '${filteredProducts[index].price}₺',
+                                          style: AppStringStyle
+                                              .productOfCategoriesPriceStyle,
+                                        ),
+                                        AddCartButton(product: filteredProducts[index])
+                                      ],
                                     ),
-                                    title: Text(
-                                      filteredProducts[index].title!,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    trailing: Text(filteredProducts[index]
-                                            .price
-                                            .toString() +
-                                        '₺'),
-                                    subtitle: Text(filteredProducts[index]
-                                        .rating
-                                        .toString()),
-                                  ),
-                                  ElevatedButton(
-                                      onPressed: () {},
-                                      child: Text('Sepete ekle'))
+                                  )
                                 ],
                               )),
                         ),
@@ -85,7 +103,7 @@ class _ProductOfCatgoriesState extends State<ProductOfCatgories> {
           );
         } else {
           return Container(
-            child: Text('Ürünler getirilemedi'),
+            child: const Text('Ürünler getirilemedi'),
           );
         }
         return Container();

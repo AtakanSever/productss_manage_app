@@ -36,21 +36,19 @@ class _HomePageState extends State<HomePage> {
             return SingleChildScrollView(
               child: Column(
                 children: [
+                  const SearchBar(),
                   const SizedBox(
                     height: 10,
                   ),
-                  const SearchBar(),
-                  const SizedBox(
-                    height: 20,
-                  ),
                   SizedBox(
-                    height: 200,
+                    height: 150,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: state.categoriesList.length,
                       itemBuilder: (context, index) {
                         var selectedCategory = state.categoriesList[index];
                         return CategoryCircle(
+                          ImageUrl: state.categoryImageList[index],
                           categoryTitle: selectedCategory,
                           function: () {
                             Navigator.of(context).push(MaterialPageRoute(
@@ -64,23 +62,35 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 10,
                   ),
-                  CarouselSlider(
-                    items: state.mostExpensiveProducts,
-                    options: CarouselOptions(
-                      autoPlayCurve: Curves.fastOutSlowIn,
-                      autoPlayAnimationDuration: const Duration(milliseconds: 800),
-                      autoPlayInterval: const Duration(seconds: 3),
-                      enlargeCenterPage: true,
-                      aspectRatio: 2.0,
-                      autoPlay: true,
-                      height: 200,
-                      onPageChanged: (index, reason) {
-                        setState(() {
-                          myCurrentIndex = index;
-                        });
-                      },
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 15),
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.deepOrange,
+                          ),
+                          borderRadius: BorderRadius.circular(20)),
+                      child: CarouselSlider(
+                        items: state.mostExpensiveProducts,
+                        options: CarouselOptions(
+                          autoPlayCurve: Curves.fastOutSlowIn,
+                          autoPlayAnimationDuration:
+                              const Duration(milliseconds: 800),
+                          autoPlayInterval: const Duration(seconds: 3),
+                          enlargeCenterPage: true,
+                          aspectRatio: 2.0,
+                          autoPlay: true,
+                          height: 200,
+                          onPageChanged: (index, reason) {
+                            setState(() {
+                              myCurrentIndex = index;
+                            });
+                          },
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -91,7 +101,8 @@ class _HomePageState extends State<HomePage> {
                     child: GridView.builder(
                       shrinkWrap: true,
                       itemCount: state.productList.length,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         mainAxisSpacing: 12.0,
                         crossAxisSpacing: 12.0,
@@ -126,4 +137,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-

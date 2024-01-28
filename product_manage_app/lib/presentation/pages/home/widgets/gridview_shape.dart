@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:product_manage_app/presentation/core/utility/app-strings_style.dart';
 
 class GridviewShape extends StatelessWidget {
   final String imageUrl;
@@ -15,21 +16,30 @@ class GridviewShape extends StatelessWidget {
     return ClipRRect(
       borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-      child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.redAccent.shade100),
+      child: Card(
+        color: Colors.white,
+        elevation: 1,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Image.network(
               imageUrl,
-              fit: BoxFit.cover,
               height: 100,
               width: double.infinity,
             ),
-            Text(productTitle),
-            Text(productPrice)
+            Text(
+              productTitle,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              style: AppStringStyle.productListTitleStyle,
+            ),
+            Text(
+              productPrice + '₺',
+              style: AppStringStyle.productListPriceStyle,
+            ),
+            SizedBox(
+              height: 5,
+            )
           ],
         ),
       ),

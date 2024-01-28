@@ -10,7 +10,12 @@ class StateCartFetching extends StateCart {}
 class StateCartFetched extends StateCart {
   final List<Product> cartProductsList;
   final List<CartModel> cartProductsDetailList;
-  StateCartFetched(this.cartProductsList, this.cartProductsDetailList);
+  StateCartFetched(
+      this.cartProductsList, this.cartProductsDetailList,);
+}
+
+class StateAddCart extends StateCart {
+  StateAddCart();
 }
 
 class StateCartFail extends StateCart {

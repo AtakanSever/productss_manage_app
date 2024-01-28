@@ -11,9 +11,14 @@ class StateProductInfoFetched extends StateProduct {
   final List<Product> productList;
   final List<dynamic> categoriesList;
   final List<Widget> mostExpensiveProducts;
+  final List<String> categoryImageList;
 
   StateProductInfoFetched(
-      this.productList, this.categoriesList, this.mostExpensiveProducts,);
+    this.productList,
+    this.categoriesList,
+    this.mostExpensiveProducts,
+    this.categoryImageList
+  );
 }
 
 class StateProductFailed extends StateProduct {

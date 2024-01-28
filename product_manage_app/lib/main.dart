@@ -18,18 +18,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<HomeBloc>(create: (context) => HomeBloc(ProductsService())),
-        BlocProvider<CartBloc>(create: (context) => CartBloc(CartServices(), ProductsService()))
+        BlocProvider<HomeBloc>(
+            create: (context) => HomeBloc(ProductsService())),
+        BlocProvider<CartBloc>(
+            create: (context) => CartBloc(CartServices(), ProductsService()))
       ],
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Flutter Demo',
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-            useMaterial3: true,
-          ),
-          home: Navbar(),
-        ),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        theme: ThemeData(),
+        home: Navbar(),
+      ),
     );
   }
 }

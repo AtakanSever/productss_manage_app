@@ -11,10 +11,24 @@ import 'package:product_manage_app/infrastructure/home/home_services.dart';
 class CartBloc extends Bloc<EventCart, StateCart> {
   final CartServices cartService;
   final ProductsService productService;
+  List<Product> matchedProducts = [];
 
   CartBloc(this.cartService, this.productService)
       : super(StateCartInitialize()) {
     on<EventCartGetInfo>(_getCartInfo);
+    on<EventAddCart>(_addCartProduct);
+  }
+
+  void addCartProduct(Product product) {
+    matchedProducts.add(product);
+  }
+
+  void _addCartProduct(EventAddCart event, emit) {
+    Product product = event.product;
+
+    addCartProduct(product);
+
+    emit(StateAddCart());
   }
 
   Future<void> _getCartInfo(EventCartGetInfo event, emit) async {
@@ -24,29 +38,32 @@ class CartBloc extends Bloc<EventCart, StateCart> {
       final List<Product>? productList = await productService.getProductInfo();
 
       if (cartList != null && cartList.isNotEmpty && productList != null) {
-        List<Product> matchedProducts = [];
         List<CartModel> metchedCartProducts = [];
 
         for (var cartItem in cartList) {
           for (var productItem in cartItem.products ?? []) {
-            final int? productId = productItem.productId;
+            if (cartItem.id == 1) {
+              final int? productId = productItem.productId;
 
-            Product? matchedProduct = productList.firstWhere(
-              (product) => product.id == productId,
-            );
+              Product? matchedProduct = productList.firstWhere(
+                (product) => product.id == productId,
+              );
 
-            Product? metchedCartProduct = productList
-                .firstWhere((cartProduct) => cartProduct.id == productId);
-
-            if (matchedProduct != null) {
-              matchedProducts.add(matchedProduct);
-              metchedCartProducts.add(CartModel(
-                id: cartItem.id,
-                userId: cartItem.userId,
-                date: cartItem.date,
-                products: [Products(productId: metchedCartProduct.id, quantity: productItem.quantity)],
-                iV: cartItem.iV
-              ));
+              Product? metchedCartProduct = productList
+                  .firstWhere((cartProduct) => cartProduct.id == productId);
+              if (matchedProduct != null) {
+                matchedProducts.add(matchedProduct);
+                metchedCartProducts.add(CartModel(
+                    id: cartItem.id,
+                    userId: cartItem.userId,
+                    date: cartItem.date,
+                    products: [
+                      Products(
+                          productId: metchedCartProduct.id,
+                          quantity: productItem.quantity)
+                    ],
+                    iV: cartItem.iV));
+              }
             }
           }
         }

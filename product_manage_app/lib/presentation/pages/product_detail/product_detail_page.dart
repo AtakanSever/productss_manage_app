@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:product_manage_app/application/cart/cart_bloc.dart';
+import 'package:product_manage_app/application/cart/cart_state.dart';
 import 'package:product_manage_app/application/home/home_bloc.dart';
 import 'package:product_manage_app/application/home/home_event.dart';
 import 'package:product_manage_app/application/home/home_state.dart';
 import 'package:product_manage_app/domain/home/home_model.dart';
+import 'package:product_manage_app/presentation/core/common_widgets/add_cart_button.dart';
+import 'package:product_manage_app/presentation/core/utility/app-strings_style.dart';
 
 class ProductDetail extends StatefulWidget {
   Product productItem;
@@ -28,13 +32,45 @@ class _ProductDetailState extends State<ProductDetail> {
             return Stack(
               children: [
                 SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Image.network(widget.productItem.image!),
-                      Text(widget.productItem.title!),
-                      Text('Ürün Açıklaması:'),
-                      Text(widget.productItem.description!)
-                    ],
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Image.network(widget.productItem.image!),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          widget.productItem.title!,
+                          style: AppStringStyle.productDetailTitleStyle,
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          children: [
+                            const Text(
+                              'Ürün Puanı:',
+                              style: AppStringStyle
+                                  .productDetailRatingDescriptionStyle,
+                            ),
+                            Text(
+                              widget.productItem.rating.toString(),
+                              style: AppStringStyle.productDetailRatingStyle,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        const Text('Ürün Açıklaması:'),
+                        Text(widget.productItem.description!),
+                        SizedBox(
+                          height: 300,
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 Positioned(
@@ -43,17 +79,16 @@ class _ProductDetailState extends State<ProductDetail> {
                   bottom: 0,
                   child: Container(
                     height: 80,
-                    color: Colors.deepOrange,
+                    color: Colors.deepOrangeAccent,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Text(widget.productItem.price.toString()),
-                        ElevatedButton(
-                            onPressed: () {}, child: Text('sepete ekle'))
+                        AddCartButton(product: widget.productItem)
                       ],
                     ),
                   ),
-                )
+                ),
               ],
             );
           } else {
