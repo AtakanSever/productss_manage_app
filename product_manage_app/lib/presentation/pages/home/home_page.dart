@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:product_manage_app/application/home/home_bloc.dart';
 import 'package:product_manage_app/application/home/home_event.dart';
 import 'package:product_manage_app/application/home/home_state.dart';
+import 'package:product_manage_app/domain/cart/cart_model.dart';
 import 'package:product_manage_app/domain/home/home_model.dart';
 import 'package:product_manage_app/presentation/pages/home/widgets/category_circle.dart';
 import 'package:product_manage_app/presentation/pages/home/widgets/gridview_shape.dart';
@@ -108,12 +109,14 @@ class _HomePageState extends State<HomePage> {
                         crossAxisSpacing: 12.0,
                       ),
                       itemBuilder: (context, index) {
-                        Product product = state.productList[index];
+                        if(index < state.cartProductList.length) {
+                          Product product = state.productList[index];
                         return InkWell(
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => ProductDetail(
-                                productItem: product,
+                                productItem: product, 
+                                cartProduct: state.cartProductList[index],
                               ),
                             ));
                           },
@@ -123,6 +126,7 @@ class _HomePageState extends State<HomePage> {
                             productPrice: product.price.toString(),
                           ),
                         );
+                        }
                       },
                     ),
                   ),

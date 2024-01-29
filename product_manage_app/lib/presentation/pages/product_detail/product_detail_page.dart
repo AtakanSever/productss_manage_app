@@ -5,13 +5,15 @@ import 'package:product_manage_app/application/cart/cart_state.dart';
 import 'package:product_manage_app/application/home/home_bloc.dart';
 import 'package:product_manage_app/application/home/home_event.dart';
 import 'package:product_manage_app/application/home/home_state.dart';
+import 'package:product_manage_app/domain/cart/cart_model.dart';
 import 'package:product_manage_app/domain/home/home_model.dart';
 import 'package:product_manage_app/presentation/core/common_widgets/add_cart_button.dart';
 import 'package:product_manage_app/presentation/core/utility/app-strings_style.dart';
 
 class ProductDetail extends StatefulWidget {
   Product productItem;
-  ProductDetail({super.key, required this.productItem});
+  CartModel cartProduct;
+  ProductDetail({super.key, required this.productItem, required this.cartProduct});
 
   @override
   State<ProductDetail> createState() => _ProductDetailState();
@@ -84,7 +86,7 @@ class _ProductDetailState extends State<ProductDetail> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Text(widget.productItem.price.toString()),
-                        AddCartButton(product: widget.productItem)
+                        AddCartButton(product: widget.productItem, cartProduct: widget.cartProduct,)
                       ],
                     ),
                   ),

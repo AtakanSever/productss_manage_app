@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:product_manage_app/application/home/home_event.dart';
 import 'package:product_manage_app/application/home/home_state.dart';
+import 'package:product_manage_app/domain/cart/cart_model.dart';
 import 'package:product_manage_app/domain/home/home_model.dart';
+import 'package:product_manage_app/infrastructure/cart/cart_services.dart';
 import 'package:product_manage_app/infrastructure/home/home_services.dart';
 
 class HomeBloc extends Bloc<EventProduct, StateProduct> {
   final ProductsService productsService;
+  final CartServices cartService;
 
-  HomeBloc(this.productsService) : super(StateProductInitialize()) {
+  HomeBloc(this.productsService, this.cartService) : super(StateProductInitialize()) {
     on<EventProductGetInfo>(_getProductInfo);
   }
 
@@ -25,6 +28,7 @@ class HomeBloc extends Bloc<EventProduct, StateProduct> {
         productList.sort(
           (a, b) => b.price!.compareTo(a.price!),
         );
+        final List<CartModel>? cartList = await cartService.getCartInfo();
         List<Product> top3ProductsList = productList.take(3).toList();
         List<Widget> top3ProductListImage = top3ProductsList.map((product) {
           return Image.network(product.image!);
@@ -43,7 +47,7 @@ class HomeBloc extends Bloc<EventProduct, StateProduct> {
 
         emit(
           StateProductInfoFetched(productList, categoriesList,
-              top3ProductListImage, categoryImageUrl),
+              top3ProductListImage, categoryImageUrl, cartList!),
         );
       } else {
         emit(StateProductFailed('Bir hata oluştu'));

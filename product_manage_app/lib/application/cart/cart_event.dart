@@ -1,3 +1,4 @@
+import 'package:product_manage_app/domain/cart/cart_model.dart';
 import 'package:product_manage_app/domain/home/home_model.dart';
 
 abstract class EventCart {}
@@ -8,5 +9,6 @@ class EventCartGetInfo extends EventCart {
 
 class EventAddCart extends EventCart {
   final Product product;
-  EventAddCart(this.product);
+  final CartModel cartProduct;
+  EventAddCart(this.product, this.cartProduct);
 }

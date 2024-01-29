@@ -12,6 +12,8 @@ class CartBloc extends Bloc<EventCart, StateCart> {
   final CartServices cartService;
   final ProductsService productService;
   List<Product> matchedProducts = [];
+  List<CartModel> metchedCartProducts = [];
+  List<CartModel> filteredProducts = [];
 
   CartBloc(this.cartService, this.productService)
       : super(StateCartInitialize()) {
@@ -19,17 +21,26 @@ class CartBloc extends Bloc<EventCart, StateCart> {
     on<EventAddCart>(_addCartProduct);
   }
 
-  void addCartProduct(Product product) {
-    matchedProducts.add(product);
-  }
+  void addCartProduct(Product product, CartModel cartProduct) {
+  matchedProducts.add(product);
+  metchedCartProducts.add(cartProduct);
+
+  emit(StateAddCart(
+    cartProductsList: matchedProducts.toList(),
+    cartProductsDetailList: metchedCartProducts.toList(),
+  ));
+}
 
   void _addCartProduct(EventAddCart event, emit) {
-    Product product = event.product;
+  Product product = event.product;
+  CartModel cartProduct = event.cartProduct;
 
-    addCartProduct(product);
-
-    emit(StateAddCart());
-  }
+  addCartProduct(product, cartProduct);
+  emit(StateCartFetched(
+    matchedProducts.toList(),
+    metchedCartProducts.toList(),
+  ));
+}
 
   Future<void> _getCartInfo(EventCartGetInfo event, emit) async {
     emit(StateCartFetching());
@@ -38,7 +49,6 @@ class CartBloc extends Bloc<EventCart, StateCart> {
       final List<Product>? productList = await productService.getProductInfo();
 
       if (cartList != null && cartList.isNotEmpty && productList != null) {
-        List<CartModel> metchedCartProducts = [];
 
         for (var cartItem in cartList) {
           for (var productItem in cartItem.products ?? []) {
