@@ -12,3 +12,10 @@ class EventAddCart extends EventCart {
   final CartModel cartProduct;
   EventAddCart(this.product, this.cartProduct);
 }
+
+class EventDeleteProductCart extends EventCart {
+  final Product product;
+  final CartModel cartProduct;
+
+  EventDeleteProductCart(this.product, this.cartProduct);
+}

@@ -8,13 +8,14 @@ import 'package:product_manage_app/domain/home/home_model.dart';
 class AddCartButton extends StatelessWidget {
   final Product product;
   final CartModel cartProduct;
-  AddCartButton({super.key, required this.product, required this.cartProduct});
+  AddCartButton({super.key, required this.product, required this.cartProduct,});
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        BlocProvider.of<CartBloc>(context).add(EventAddCart(product, cartProduct));
+        BlocProvider.of<CartBloc>(context)
+            .add(EventAddCart(product, cartProduct));
       },
       style: ElevatedButton.styleFrom(
           backgroundColor: Colors.deepOrange,

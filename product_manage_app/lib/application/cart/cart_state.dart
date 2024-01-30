@@ -10,8 +10,9 @@ class StateCartFetching extends StateCart {}
 class StateCartFetched extends StateCart {
   final List<Product> cartProductsList;
   final List<CartModel> cartProductsDetailList;
+  final double totalPrice;
 
-  StateCartFetched(this.cartProductsList, this.cartProductsDetailList);
+  StateCartFetched(this.cartProductsList, this.cartProductsDetailList, this.totalPrice);
 }
 
 class StateAddCart extends StateCart {
@@ -24,9 +25,18 @@ class StateAddCart extends StateCart {
   });
 }
 
+class StateDeleteProductCart extends StateCart {
+  final List<Product> cartProductList;
+  final List<CartModel> cartProductDetailList;
+
+  StateDeleteProductCart({
+    required this.cartProductList,
+    required this.cartProductDetailList,
+  });
+}
+
 class StateCartFail extends StateCart {
   final String errorMessage;
 
   StateCartFail(this.errorMessage);
 }
-

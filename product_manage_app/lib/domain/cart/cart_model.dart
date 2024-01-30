@@ -1,8 +1,22 @@
+import 'package:hive/hive.dart';
+
+part 'cart_model.g.dart';
+
+@HiveType(typeId: 2)
 class CartModel {
+  @HiveField(0)
   int? id;
+
+  @HiveField(1)
   int? userId;
+
+  @HiveField(2)
   String? date;
+
+  @HiveField(3)
   List<Products>? products;
+
+  @HiveField(4)
   int? iV;
 
   CartModel({this.id, this.userId, this.date, this.products, this.iV});
@@ -33,8 +47,12 @@ class CartModel {
   }
 }
 
+@HiveType(typeId: 3)
 class Products {
+  @HiveField(0)
   int? productId;
+
+  @HiveField(1)
   int? quantity;
 
   Products({this.productId, this.quantity});

@@ -1,10 +1,21 @@
+import 'package:hive_flutter/hive_flutter.dart';
+part 'home_model.g.dart';
+
+@HiveType(typeId: 0)
 class Product {
+  @HiveField(0)
   int? id;
+  @HiveField(1)
   String? title;
+  @HiveField(2)
   double? price;
+  @HiveField(3)
   String? description;
+  @HiveField(4)
   String? category;
+  @HiveField(5)
   String? image;
+  @HiveField(6)
   Rating? rating;
 
   Product(
@@ -42,8 +53,11 @@ class Product {
   }
 }
 
+@HiveType(typeId: 1)
 class Rating {
+  @HiveField(0)
   double? rate;
+  @HiveField(1)
   int? count;
 
   Rating({this.rate, this.count});
