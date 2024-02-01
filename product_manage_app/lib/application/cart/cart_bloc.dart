@@ -1,133 +1,110 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:product_manage_app/application/cart/cart_event.dart';
 import 'package:product_manage_app/application/cart/cart_state.dart';
-import 'package:product_manage_app/application/home/home_bloc.dart';
-import 'package:product_manage_app/application/home/home_state.dart';
-import 'package:product_manage_app/domain/cart/cart_model.dart';
 import 'package:product_manage_app/domain/home/home_model.dart';
-import 'package:product_manage_app/infrastructure/cart/cart_services.dart';
 import 'package:product_manage_app/infrastructure/home/home_services.dart';
-import 'package:product_manage_app/presentation/core/database/app_cache.dart';
 
-class CartBloc extends Bloc<EventCart, StateCart> {
-  final CartServices cartService;
-  final ProductsService productService;
-  List<Product> matchedProducts = [];
-  List<CartModel> metchedCartProducts = [];
-  List<CartModel> filteredProducts = [];
-  late AppCache _appcacheProduct;
-  late AppCache _appcacheCart;
-  double totalPrice = 0.0;
-
-  CartBloc(this.cartService, this.productService)
-      : super(StateCartInitialize()) {
-    _appcacheProduct = AppCacheProducts();
-    _appcacheCart = AppCacheCart();
-    on<EventCartGetInfo>(_getCartInfo);
-    on<EventAddCart>(_addCartProduct);
-    on<EventDeleteProductCart>(_deleteProductCart);
+class CartBloc extends Bloc<CartEvent, CartState> {
+  CartBloc() : super(CartState()) {
+    on<EventAddCart>(_onAddCartProduct);
+    on<EventDeleteProductCart>(_onDeleteCartProduct);
+    on<EventGetTotalPrice>(_onGetTotalPrice);
+    on<EventCategoryRatio>(_onCategoryRatioTotalPrice);
   }
 
-  void addCartProduct(Product product, CartModel cartProduct) {
-    matchedProducts.add(product);
-    metchedCartProducts.add(cartProduct);
+  late ProductsService _productsService = ProductsService();
 
-    emit(StateAddCart(
-      cartProductsList: matchedProducts.toList(),
-      cartProductsDetailList: metchedCartProducts.toList(),
+  Future<void> _onAddCartProduct(
+      EventAddCart event, Emitter<CartState> emit) async {
+    emit(state.copyWith(
+      isInProgress: true,
+      isUpdated: false,
     ));
-  }
 
-  void _addCartProduct(EventAddCart event, emit) {
-    Product product = event.product;
-    CartModel cartProduct = event.cartProduct;
+    List<Product> updatedProducts = List.from(state.products)
+      ..add(event.product);
 
-    addCartProduct(product, cartProduct);
-    emit(StateCartFetched(
-      matchedProducts.toList(),
-      metchedCartProducts.toList(),
-      totalPrice
-    ));
-    _appcacheProduct.addProduct(item: event.product);
-    _appcacheCart.addProduct(item: event.cartProduct);
-  }
+    final selectedProduct = updatedProducts.firstWhere(
+      (element) => element.id == event.product.id,
+    );
 
-  void deleteProductCart(Product product, CartModel cartProduct) {
-    matchedProducts.remove(product);
-    metchedCartProducts.remove(cartProduct);
-
-    emit(StateDeleteProductCart(
-        cartProductList: matchedProducts.toList(),
-        cartProductDetailList: metchedCartProducts.toList()));
-  }
-
-  void _deleteProductCart(EventDeleteProductCart event, emit) {
-    Product product = event.product;
-    CartModel cartProduct = event.cartProduct;
-
-    deleteProductCart(product, cartProduct);
-    emit(StateCartFetched(
-      matchedProducts.toList(),
-      metchedCartProducts.toList(),
-      totalPrice
-
-    ));
-    _appcacheProduct.deleteProduct(item: event.product);
-    _appcacheCart.deleteProduct(item: event.cartProduct);
-  }
-
-  Future<void> _getCartInfo(EventCartGetInfo event, emit) async {
-    emit(StateCartFetching());
-    try {
-      final List<CartModel>? cartList = await cartService.getCartInfo();
-      final List<Product>? productList = await productService.getProductInfo();
-
-      if (cartList != null && cartList.isNotEmpty && productList != null) {
-        for (var cartItem in cartList) {
-          for (var productItem in cartItem.products ?? []) {
-            if (cartItem.id == 1) {
-              final int? productId = productItem.productId;
-
-              Product? matchedProduct = productList.firstWhere(
-                (product) => product.id == productId,
-              );
-
-              Product? metchedCartProduct = productList
-                  .firstWhere((cartProduct) => cartProduct.id == productId);
-              if (matchedProduct != null) {
-                matchedProducts.add(matchedProduct);
-                metchedCartProducts.add(CartModel(
-                    id: cartItem.id,
-                    userId: cartItem.userId,
-                    date: cartItem.date,
-                    products: [
-                      Products(
-                          productId: metchedCartProduct.id,
-                          quantity: productItem.quantity)
-                    ],
-                    iV: cartItem.iV));
-              }
-            }
-          }
-        }
-        List<Product> storedProductList =
-            await _appcacheProduct.getAllProducts();
-        List<CartModel> storedCartList =
-            await _appcacheCart.getAllCartProducts();
-
-        matchedProducts = storedProductList;
-        metchedCartProducts = storedCartList;
-
-        for (var product in matchedProducts) {
-          totalPrice = totalPrice + product.price!;
-        }
-
-        emit(StateCartFetched(matchedProducts, metchedCartProducts, totalPrice));
-      } else {
-        emit(StateCartFail('Bir hata Oluştu'));
-      }
-    } catch (e) {
-      emit(StateCartFail(e.toString()));
+    if (selectedProduct != null) {
+      event.product.amount = selectedProduct.amount! + 1;
+    } else {
+      event.product.amount = 1;
     }
+
+    Set<Product> updatedSetProduct = updatedProducts.toSet();
+    List<Product> updatedProductList = updatedSetProduct.toList();
+
+    emit(state.copyWith(
+      isInProgress: false,
+      isUpdated: true,
+      products: updatedProductList,
+    ));
+
+    add(EventGetTotalPrice(selectedProduct));
+    add(EventCategoryRatio(selectedProduct));
+  }
+
+  Future<void> _onDeleteCartProduct(
+      EventDeleteProductCart event, Emitter<CartState> emit) async {
+    emit(state.copyWith(
+      isInProgress: true,
+      isUpdated: false,
+    ));
+    List<Product> updatedProducts = List.from(state.products)
+      ..remove(event.product);
+
+    emit(state.copyWith(
+        isInProgress: false, isUpdated: true, products: updatedProducts));
+        add(EventGetTotalPrice(event.product));
+    add(EventCategoryRatio(event.product));
+    
+  }
+
+  Future<void> _onGetTotalPrice(
+      EventGetTotalPrice event, Emitter<CartState> emit) async {
+    emit(state.copyWith(
+      isInProgress: true,
+      isUpdated: false,
+    ));
+
+    double totalPrice = 0;
+    for (var product in state.products) {
+      totalPrice += product.amount! * product.price!;
+    }
+
+    emit(state.copyWith(
+        isInProgress: false, isUpdated: true, totalPrice: totalPrice));
+  }
+
+  Future<void> _onCategoryRatioTotalPrice(
+      EventCategoryRatio event, Emitter<CartState> emit) async {
+    emit(state.copyWith(
+      isInProgress: true,
+      isUpdated: false,
+    ));
+    double totalNetMoney = 0;
+
+    for (var product in state.products) {
+      if (product.category == "jewelery") {
+        totalNetMoney += product.amount! * product.price! * 0.2;
+      } else if (product.category == "electronics") {
+        totalNetMoney += product.amount! * product.price! * 0.1;
+      } else if (product.category == "men's clothing") {
+        totalNetMoney += product.amount! * product.price! * 0.03;
+      } else if (product.category == "women's clothing") {
+        totalNetMoney += product.amount! * product.price! * 0.05;
+      }
+    }
+
+    emit(state.copyWith(
+      isInProgress: false,
+      isUpdated: true,
+      netMoney: totalNetMoney,
+    ));
   }
 }

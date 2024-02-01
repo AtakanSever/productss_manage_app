@@ -17,6 +17,8 @@ class Product {
   String? image;
   @HiveField(6)
   Rating? rating;
+  @HiveField(7)
+  int? amount = 0;
 
   Product(
       {this.id,
@@ -25,7 +27,11 @@ class Product {
       this.description,
       this.category,
       this.image,
-      this.rating});
+      this.rating,
+      this.amount,
+      });
+
+      
 
   Product.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -50,6 +56,27 @@ class Product {
       data['rating'] = this.rating!.toJson();
     }
     return data;
+  }
+    Product copyWith({
+    int? id,
+    String? title,
+    double? price,
+    String? description,
+    String? category,
+    String? image,
+    Rating? rating,
+    int? amount,
+  }) {
+    return Product(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      price: price ?? this.price,
+      description: description ?? this.description,
+      category: category ?? this.category,
+      image: image ?? this.image,
+      rating: rating ?? this.rating,
+      amount: amount ?? this.amount,
+    );
   }
 }
 

@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
             return SingleChildScrollView(
               child: Column(
                 children: [
-                  const SearchBar(),
+                  //const SearchBarWidget(),
                   const SizedBox(
                     height: 10,
                   ),
@@ -109,23 +109,23 @@ class _HomePageState extends State<HomePage> {
                         crossAxisSpacing: 12.0,
                       ),
                       itemBuilder: (context, index) {
-                        if(index < state.cartProductList.length) {
+                        if (index < state.cartProductList.length) {
                           Product product = state.productList[index];
-                        return InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ProductDetail(
-                                productItem: product, 
-                                cartProduct: state.cartProductList[index],
-                              ),
-                            ));
-                          },
-                          child: GridviewShape(
-                            imageUrl: product.image!,
-                            productTitle: product.title!,
-                            productPrice: product.price.toString(),
-                          ),
-                        );
+                          return InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => ProductDetail(
+                                  productItem: product,
+                                  cartProduct: state.cartProductList[index],
+                                ),
+                              ));
+                            },
+                            child: GridviewShape(
+                              imageUrl: product.image!,
+                              productTitle: product.title!,
+                              productPrice: product.price.toString(),
+                            ),
+                          );
                         }
                       },
                     ),

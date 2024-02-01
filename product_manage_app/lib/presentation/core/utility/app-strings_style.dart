@@ -23,4 +23,10 @@ class AppStringStyle {
 
   static const TextStyle productDetailRatingStyle =
       TextStyle(fontSize: 20, color: Colors.deepOrange);
+
+  static const TextStyle totalPriceDescriptionStyle =
+      TextStyle(color: Colors.white70);
+
+  static const TextStyle totalPriceStyle =
+      TextStyle(color: Colors.white, fontSize: 24);
 }

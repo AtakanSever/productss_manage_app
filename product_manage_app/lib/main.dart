@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<HomeBloc>(
             create: (context) => HomeBloc(ProductsService(), CartServices())),
         BlocProvider<CartBloc>(
-            create: (context) => CartBloc(CartServices(), ProductsService())),
+            create: (context) => CartBloc()),
         BlocProvider(
             create: (context) =>
                 ProductOfCategoriesBloc(ProductsService(), CartServices()))

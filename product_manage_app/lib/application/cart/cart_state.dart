@@ -1,42 +1,38 @@
-import 'package:product_manage_app/domain/cart/cart_model.dart';
 import 'package:product_manage_app/domain/home/home_model.dart';
 
-abstract class StateCart {}
-
-class StateCartInitialize extends StateCart {}
-
-class StateCartFetching extends StateCart {}
-
-class StateCartFetched extends StateCart {
-  final List<Product> cartProductsList;
-  final List<CartModel> cartProductsDetailList;
+class CartState {
+  final bool isInProgress;
+  final bool isUpdated;
+  final bool isFailed;
+  final List<Product> products;
   final double totalPrice;
+  final double netMoney;
 
-  StateCartFetched(this.cartProductsList, this.cartProductsDetailList, this.totalPrice);
-}
-
-class StateAddCart extends StateCart {
-  final List<Product> cartProductsList;
-  final List<CartModel> cartProductsDetailList;
-
-  StateAddCart({
-    required this.cartProductsList,
-    required this.cartProductsDetailList,
+  CartState({
+    this.isInProgress = false,
+    this.isUpdated = false,
+    this.isFailed = false,
+    this.products = const [],
+    this.totalPrice = 0,
+    this.netMoney = 0,
   });
-}
 
-class StateDeleteProductCart extends StateCart {
-  final List<Product> cartProductList;
-  final List<CartModel> cartProductDetailList;
-
-  StateDeleteProductCart({
-    required this.cartProductList,
-    required this.cartProductDetailList,
-  });
-}
-
-class StateCartFail extends StateCart {
-  final String errorMessage;
-
-  StateCartFail(this.errorMessage);
+  CartState copyWith(
+      {bool? isInProgress,
+      bool? isUpdated,
+      bool? isFailed,
+      int? amount,
+      List<Product>? products,
+      double? totalPrice,
+      double? netMoney,
+      }) {
+    return CartState(
+      isInProgress: isInProgress ?? this.isInProgress,
+      isUpdated: isUpdated ?? this.isUpdated,
+      isFailed: isFailed ?? this.isFailed,
+      products: products ?? this.products,
+      totalPrice: totalPrice ?? this.totalPrice,
+      netMoney: netMoney ?? this.netMoney,
+    );
+  }
 }

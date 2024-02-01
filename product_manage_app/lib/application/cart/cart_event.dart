@@ -1,21 +1,27 @@
+import 'package:flutter/foundation.dart';
 import 'package:product_manage_app/domain/cart/cart_model.dart';
 import 'package:product_manage_app/domain/home/home_model.dart';
 
-abstract class EventCart {}
+abstract class CartEvent {}
 
-class EventCartGetInfo extends EventCart {
-  EventCartGetInfo();
+class EventAddCart extends CartEvent {
+  final Product product;
+  int amount;
+  EventAddCart(this.product, {this.amount = 0});
 }
 
-class EventAddCart extends EventCart {
+class EventDeleteProductCart extends CartEvent {
   final Product product;
-  final CartModel cartProduct;
-  EventAddCart(this.product, this.cartProduct);
+
+  EventDeleteProductCart(this.product);
 }
 
-class EventDeleteProductCart extends EventCart {
+class EventGetTotalPrice extends CartEvent {
   final Product product;
-  final CartModel cartProduct;
+  EventGetTotalPrice(this.product);
+}
 
-  EventDeleteProductCart(this.product, this.cartProduct);
+class EventCategoryRatio extends CartEvent {
+  final Product product;
+  EventCategoryRatio(this.product,);
 }

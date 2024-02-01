@@ -86,7 +86,7 @@ class _ProductDetailState extends State<ProductDetail> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Text(widget.productItem.price.toString()),
-                        AddCartButton(product: widget.productItem, cartProduct: widget.cartProduct,)
+                        AddCartButton(product: widget.productItem,)
                       ],
                     ),
                   ),
