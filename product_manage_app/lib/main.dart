@@ -15,10 +15,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(ProductAdapter());
   Hive.registerAdapter(RatingAdapter());
-  Hive.registerAdapter(CartModelAdapter());
-  Hive.registerAdapter(ProductsAdapter());
   await Hive.openBox<Product>('products');
-  await Hive.openBox<CartModel>('cart');
   runApp(const MyApp());
 }
 
@@ -31,8 +28,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<HomeBloc>(
             create: (context) => HomeBloc(ProductsService(), CartServices())),
-        BlocProvider<CartBloc>(
-            create: (context) => CartBloc()),
+        BlocProvider<CartBloc>(create: (context) => CartBloc()),
         BlocProvider(
             create: (context) =>
                 ProductOfCategoriesBloc(ProductsService(), CartServices()))

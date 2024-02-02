@@ -5,16 +5,38 @@ import 'package:product_manage_app/application/cart/cart_event.dart';
 import 'package:product_manage_app/application/cart/cart_state.dart';
 import 'package:product_manage_app/domain/home/home_model.dart';
 import 'package:product_manage_app/infrastructure/home/home_services.dart';
+import 'package:product_manage_app/presentation/core/database/app_cache.dart';
 
 class CartBloc extends Bloc<CartEvent, CartState> {
+  late AppCache _appCache;
   CartBloc() : super(CartState()) {
+    _appCache = AppCacheProducts();
     on<EventAddCart>(_onAddCartProduct);
     on<EventDeleteProductCart>(_onDeleteCartProduct);
     on<EventGetTotalPrice>(_onGetTotalPrice);
     on<EventCategoryRatio>(_onCategoryRatioTotalPrice);
+    on<EventUseNetMoney>(_onUseNetMoney);
+    on<EventGetProducts>(_onGetProducts);
+  }
+  late ProductsService _productsService = ProductsService();
+
+
+
+
+  Future<void> _onGetProducts(
+      EventGetProducts event, Emitter<CartState> emit) async {
+    emit(state.copyWith(
+      isInProgress: true,
+      isUpdated: false,
+    ));
+    List<Product> products = state.products;
+    List<Product> newProducts = await _appCache.getAllProducts(products);
+
+    emit(state.copyWith(
+        isInProgress: false, isUpdated: true, products: newProducts,));
   }
 
-  late ProductsService _productsService = ProductsService();
+
 
   Future<void> _onAddCartProduct(
       EventAddCart event, Emitter<CartState> emit) async {
@@ -47,7 +69,11 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
     add(EventGetTotalPrice(selectedProduct));
     add(EventCategoryRatio(selectedProduct));
+    add(EventUseNetMoney());
+    _appCache.addProduct(item: event.product);
   }
+
+
 
   Future<void> _onDeleteCartProduct(
       EventDeleteProductCart event, Emitter<CartState> emit) async {
@@ -60,10 +86,13 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
     emit(state.copyWith(
         isInProgress: false, isUpdated: true, products: updatedProducts));
-        add(EventGetTotalPrice(event.product));
+    add(EventGetTotalPrice(event.product));
     add(EventCategoryRatio(event.product));
-    
+    add(EventUseNetMoney());
+    _appCache.deleteProduct(item: event.product);
   }
+
+
 
   Future<void> _onGetTotalPrice(
       EventGetTotalPrice event, Emitter<CartState> emit) async {
@@ -80,6 +109,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     emit(state.copyWith(
         isInProgress: false, isUpdated: true, totalPrice: totalPrice));
   }
+
+
+
 
   Future<void> _onCategoryRatioTotalPrice(
       EventCategoryRatio event, Emitter<CartState> emit) async {
@@ -105,6 +137,26 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       isInProgress: false,
       isUpdated: true,
       netMoney: totalNetMoney,
+    ));
+  }
+
+
+
+
+  Future<void> _onUseNetMoney(
+      EventUseNetMoney event, Emitter<CartState> emit) async {
+    emit(state.copyWith(
+      isInProgress: true,
+      isUpdated: false,
+    ));
+
+    double updateTotalPrice = 0;
+    updateTotalPrice = state.totalPrice - (state.netMoney ?? 0);
+
+    emit(state.copyWith(
+      isInProgress: false,
+      isUpdated: true,
+      updateTotalPrice: updateTotalPrice,
     ));
   }
 }

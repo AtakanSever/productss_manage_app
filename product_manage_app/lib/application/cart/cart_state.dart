@@ -7,6 +7,8 @@ class CartState {
   final List<Product> products;
   final double totalPrice;
   final double netMoney;
+  final bool check;
+  final double updateTotalPrice;
 
   CartState({
     this.isInProgress = false,
@@ -15,6 +17,8 @@ class CartState {
     this.products = const [],
     this.totalPrice = 0,
     this.netMoney = 0,
+    this.check = false,
+    this.updateTotalPrice = 0,
   });
 
   CartState copyWith(
@@ -25,14 +29,16 @@ class CartState {
       List<Product>? products,
       double? totalPrice,
       double? netMoney,
-      }) {
+      bool? check,
+      double? updateTotalPrice}) {
     return CartState(
-      isInProgress: isInProgress ?? this.isInProgress,
-      isUpdated: isUpdated ?? this.isUpdated,
-      isFailed: isFailed ?? this.isFailed,
-      products: products ?? this.products,
-      totalPrice: totalPrice ?? this.totalPrice,
-      netMoney: netMoney ?? this.netMoney,
-    );
+        isInProgress: isInProgress ?? this.isInProgress,
+        isUpdated: isUpdated ?? this.isUpdated,
+        isFailed: isFailed ?? this.isFailed,
+        products: products ?? this.products,
+        totalPrice: totalPrice ?? this.totalPrice,
+        netMoney: netMoney ?? this.netMoney,
+        check: check ?? this.check,
+        updateTotalPrice: updateTotalPrice ?? this.updateTotalPrice);
   }
 }

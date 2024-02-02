@@ -4,6 +4,13 @@ import 'package:product_manage_app/domain/home/home_model.dart';
 
 abstract class CartEvent {}
 
+class EventGetProducts extends CartEvent {
+  double netMoney;
+  double totalPrice;
+  double updateTotalPrice;
+  EventGetProducts(this.netMoney, this.totalPrice, this.updateTotalPrice);
+}
+
 class EventAddCart extends CartEvent {
   final Product product;
   int amount;
@@ -23,5 +30,11 @@ class EventGetTotalPrice extends CartEvent {
 
 class EventCategoryRatio extends CartEvent {
   final Product product;
-  EventCategoryRatio(this.product,);
+  EventCategoryRatio(
+    this.product,
+  );
+}
+
+class EventUseNetMoney extends CartEvent {
+  EventUseNetMoney();
 }

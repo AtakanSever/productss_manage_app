@@ -4,7 +4,7 @@ import 'package:product_manage_app/domain/home/home_model.dart';
 
 abstract class AppCache<T> {
   Future<void> addProduct({required T item});
-  Future<List<Product>> getAllProducts();
+  Future<List<Product>> getAllProducts(List<Product> products);
   Future<bool> deleteProduct({required T item});
   Future<List<CartModel>> getAllCartProducts();
 }
@@ -32,7 +32,7 @@ class AppCacheProducts extends AppCache<Product> {
   }
 
   @override
-  Future<List<Product>> getAllProducts() async {
+  Future<List<Product>> getAllProducts(List<Product> products) async {
     List<Product> _allProducts = _productsBox.values.toList();
     return _allProducts;
   }
@@ -72,7 +72,7 @@ class AppCacheCart extends AppCache<CartModel> {
   }
 
   @override
-  Future<List<Product>> getAllProducts() {
+  Future<List<Product>> getAllProducts(List<Product> products) {
     // TODO: implement getAllProducts
     throw UnimplementedError();
   }
